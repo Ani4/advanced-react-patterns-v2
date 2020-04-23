@@ -4,7 +4,7 @@ import React from 'react'
 import {Switch} from '../switch'
 
 const callAll = (...fns) => (...args) =>
-  fns.forEach(fn => fn && fn(...args))
+  fns.forEach((fn) => fn && fn(...args))
 
 // Render props allow users to be in control over the UI based on state.
 // State reducers allow users to be in control over logic based on actions.
@@ -32,6 +32,23 @@ class Toggle extends React.Component {
   }
   initialState = {on: this.props.initialOn}
   state = this.initialState
+  internalSetState = (changes, callback) => {
+    this.setState((state) => {
+      // handle function setState call
+      const changesObject =
+        typeof changes === 'function' ? changes(state) : changes
+
+      // apply state reducer
+      const reducedChanges =
+        this.props.stateReducer(state, changesObject) || {}
+
+      // return null if there are no changes to be made
+      // (to avoid an unecessary rerender)
+      return Object.keys(reducedChanges).length
+        ? reducedChanges
+        : null
+    }, callback)
+  }
   // 🐨 let's add a method here called `internalSetState`. It will simulate
   // the same API as `setState(updater, callback)`:
   // - updater: (changes object or function that returns the changes object)
@@ -49,11 +66,11 @@ class Toggle extends React.Component {
   // 🐨 Finally, update all pre-existing instances of this.setState
   // to this.internalSetState
   reset = () =>
-    this.setState(this.initialState, () =>
+    this.internalSetState(this.initialState, () =>
       this.props.onReset(this.state.on),
     )
   toggle = () =>
-    this.setState(
+    this.internalSetState(
       ({on}) => ({on: !on}),
       () => this.props.onToggle(this.state.on),
     )
@@ -109,7 +126,7 @@ class Usage extends React.Component {
         onToggle={this.handleToggle}
         onReset={this.handleReset}
       >
-        {toggle => (
+        {(toggle) => (
           <div>
             <Switch
               {...toggle.getTogglerProps({
