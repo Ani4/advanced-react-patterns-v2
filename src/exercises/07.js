@@ -4,16 +4,24 @@ import React from 'react'
 import {Switch} from '../switch'
 
 const callAll = (...fns) => (...args) =>
-  fns.forEach(fn => fn && fn(...args))
+  fns.forEach((fn) => fn && fn(...args))
 
 class Toggle extends React.Component {
+  static defaultProps = {
+    initialOn: false,
+    onReset: () => {},
+  }
+  initialState = {on: this.props.initialOn}
   // 🐨 We're going to need some static defaultProps here to allow
   // people to pass a `initialOn` prop.
   //
   // 🐨 Rather than initializing state to have on as false,
   // set on to this.props.initialOn
   state = {on: false}
-
+  reset = () =>
+    this.setState(this.initialState, () =>
+      this.props.onReset(this.state.on),
+    )
   // 🐨 now let's add a reset method here that resets the state
   // to the initial state. Then add a callback that calls
   // this.props.onReset with the `on` state.
@@ -33,6 +41,7 @@ class Toggle extends React.Component {
     return {
       on: this.state.on,
       toggle: this.toggle,
+      reset: this.reset,
       // 🐨 now let's include the reset method here
       // so folks can use that in their implementation.
       getTogglerProps: this.getTogglerProps,
