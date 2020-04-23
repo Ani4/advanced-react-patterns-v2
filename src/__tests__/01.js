@@ -34,10 +34,10 @@ test('can toggle back and forth', () => {
 // 3. Change submitted from `false` to `true`
 // 4. And you're all done!
 /*
-http://ws.kcd.im/?ws=react%20patterns&e=01&em=
+http://ws.kcd.im/?ws=react%20patterns&e=01&em=sharma.ani.4298%40gmail.com
 */
-test.skip('I submitted my elaboration and feedback', () => {
-  const submitted = false // change this when you've submitted!
+test('I submitted my elaboration and feedback', () => {
+  const submitted = true // change this when you've submitted!
   expect(submitted).toBe(true)
 })
 ////////////////////////////////
